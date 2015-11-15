@@ -1,0 +1,175 @@
+#include "libraries/spoofer.h"
+// Define the Arduino PIN 
+#define coil_pin 9
+
+// ID to spoof
+char data[10] = {'5', '0', '0', '0', '7', 'C', '1', '2', 'C', '5'};
+
+int spoofed_card[64];
+
+void build_content();
+void spoofnow();
+int HexToDec(char hexa);
+
+
+void setup() { 
+  Serial.begin(9600); 
+  pinMode(coil_pin, OUTPUT); 
+  //pinMode(13, OUTPUT); 
+  digitalWrite(coil_pin, LOW);
+  Serial.println("Building");
+  build_content();
+}
+
+void loop() {
+  Serial.println("Ready for spoofing");
+  spoofnow();
+
+  Serial.println("Spoof done"); 
+}
+
+// Function that build the transponder's content 
+void build_content() {
+
+  // iterator for the ID wanted 
+  int data_iterator = 0;
+
+  // hex value of the ID 
+  int raw_data;
+  int i;
+
+  // the 9 first bit are 1 logic (a+9) 
+  for (i = 0; i < 9; i++) {
+    spoofed_card[i] = 1; 
+  }
+
+  // the 5th bit is for parity. Calculated at the end 
+  // This loop writes each hex in bit
+  for (int a = 0; a < 10; a++) {
+    raw_data = HexToDec(data[data_iterator]);
+    spoofed_card[(a*5)+9] = bitRead(raw_data, 3); 
+    spoofed_card[(a*5)+10] = bitRead(raw_data, 2); 
+    spoofed_card[(a*5)+11] = bitRead(raw_data, 1); 
+    spoofed_card[(a*5)+12] = bitRead(raw_data, 0);
+    data_iterator++; 
+  }
+
+  int bit_set = 0;
+
+  // CRC ROW
+  for(int r = 0; r < 10; r++) {
+    // Calculate number of 1 per row 
+    for(i = 0; i < 4; i++) {
+      if(spoofed_card[(r*5)+i+9]) { 
+        bit_set++;
+      } 
+    }
+
+    // If number of 1 is even, parity = 1 else 0
+    if((bit_set % 2) != 0) { 
+      spoofed_card[(5*r)+4+9] = 1;
+    } else { 
+      spoofed_card[(5*r)+4+9] = 0;
+    }
+
+    bit_set = 0; 
+  }
+
+  // CRC COLUMN
+  bit_set = 0;
+
+  for(int c = 0; c < 4; c++) {
+
+    // Calculate number of 1 per column 
+    for(i = 0; i < 10; i++) {
+
+      if(spoofed_card[c+(i*5)+9]) { 
+        bit_set++;
+      }
+    }
+
+    // If number of 1 is even, parity = 1 else 0 
+    if((bit_set % 2) != 0) {
+      spoofed_card[50+9+c] = 1; 
+    } else {
+      spoofed_card[50+9+c] = 0; 
+    }
+
+    bit_set = 0; 
+  }
+
+  // Last bit = stop bit = 0
+  spoofed_card[63] = 0; 
+}
+
+// Function that converts Hexadecimal in Decimal
+int HexToDec(char hexa) {
+
+  if(hexa == '0') 
+    return 0;
+
+  if(hexa == '1') 
+    return 1;
+
+  if(hexa == '2') 
+    return 2;
+
+  if(hexa == '3') 
+    return 3;
+
+  if(hexa == '4') 
+    return 4;
+
+  if(hexa == '5') 
+    return 5;
+
+  if(hexa == '6') 
+    return 6;
+
+  if(hexa == '7') 
+    return 7;
+
+  if(hexa == '8') 
+    return 8;
+
+  if(hexa == '9') 
+    return 9;
+
+  if(hexa == 'A') 
+    return 10;
+
+  if(hexa == 'B') 
+    return 11;
+
+  if(hexa == 'C') 
+    return 12;
+
+  if(hexa == 'D') 
+    return 13;
+
+  if(hexa == 'E') 
+    return 14;
+
+  if(hexa == 'F') 
+    return 15;
+}
+
+void send_manchester(int clock_half, int signal) {
+  // XOR the clock and the signal
+  int man_encoded = clock_half ^ signal;
+
+  if(man_encoded) { 
+    digitalWrite(coil_pin, HIGH);
+  } else {
+    digitalWrite(coil_pin, LOW);
+  }
+}
+
+void spoofnow() {
+  for(int i = 0; i < 64; i++) {
+    send_manchester(0, spoofed_card[i]); 
+    delayMicroseconds(256);
+    send_manchester(1, spoofed_card[i]);
+    delayMicroseconds(256); 
+  }
+}
