@@ -3,10 +3,11 @@
 
 sysinf::sysinf(Core *cr):
 App(cr),
-intEepromAddr(sysinfID * 100),
-buttonsbuf("                     "),
+intEepromAddr(sysinfID * 20),
+buttonsbuf(String("                     ")),
 selButton(0)
 {
+	pinMode(13, OUTPUT);
 }
 
 sysinf::~sysinf()
@@ -71,10 +72,10 @@ void sysinf::drawButtons()
 	core->u8g->setColorIndex(1);
 }
 
-void sysinf::input_button(int ID)
+void sysinf::input_button(byte ID)
 {
-	buttonsbuf = String(ID) + buttonsbuf;
 	buttonsbuf.remove(buttonsbuf.length() - 1);
+	buttonsbuf = String(ID) + buttonsbuf;
 
 	if(ID == 3)
 	{
@@ -96,7 +97,7 @@ void sysinf::input_button(int ID)
 		}
 		if(selButton == 1)
 		{
-			core->showMessage("HELLOOOOO!1111 =D");
+			core->showMessage(F("HELLOOOOO!1111 =D"));
 		}
 		if(selButton == 2)
 		{

@@ -7,7 +7,7 @@ RFIDSpoofer::RFIDSpoofer(short Pin, Core * cr):
 App(cr),
 cache(new byte[32]),
 pin(Pin),
-intEepromAddr(RFIDSpooferID * 100),
+intEepromAddr(RFIDSpooferID * 20),
 extEepromAddr(RFIDSpooferExtrenalEEPROMID * 1024),
 status(0)
 {
@@ -30,31 +30,14 @@ void RFIDSpoofer::drawGUI()
 	core->u8g->setPrintPos(0, 10);
 	for (int i = 1; i < 2; i++)
 	{
-		core->u8g->print("123456789012345678901234567890");
+		core->u8g->print(F("123456789012345678901234567890"));
 	}
 }
-void RFIDSpoofer::input_button(int ID)
+void RFIDSpoofer::input_button(byte ID)
 {
 
 }
 
-void RFIDSpoofer::load_saved_cache()
-{
-
-}
-
-void RFIDSpoofer::save_cache()
-{
-
-}
-void RFIDSpoofer::set_content(byte * data)
-{
-
-}
-byte * RFIDSpoofer::get_content()
-{
-
-}
 void RFIDSpoofer::spoofnow()
 {
 	//Serial.println("Data: ");
@@ -78,14 +61,6 @@ void RFIDSpoofer::send_manchester(int clock_half, int signal)
 	} else {
 		digitalWrite(pin, LOW);
 	}
-}
-void RFIDSpoofer::init()
-{
-
-}
-void RFIDSpoofer::dispose()
-{
-
 }
 void RFIDSpoofer::update()
 {

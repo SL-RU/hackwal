@@ -3,16 +3,14 @@
 
 testapp::testapp(Core *cr):
 App(cr),
-intEepromAddr(testappID * 100),
+intEepromAddr(testappID * 20),
 extEepromAddr(testappExtrenalEEPROMID * 1024)
 {
 
 	var = core->readExtEEPROM(extEepromAddr);
 }
 
-testapp::~testapp()
-{
-}
+
 
 byte testapp::getID()
 {
@@ -37,7 +35,7 @@ void testapp::drawGUI()
 	core->u8g->print(millis());
 }
 
-void testapp::input_button(int ID)
+void testapp::input_button(byte ID)
 {
 	var++;
 	writeVar();
@@ -48,9 +46,9 @@ void testapp::writeVar()
 }
 void testapp::print_all_commands()
 {
-	Serial.print("""d\tReset var\n\
+	Serial.print(F("""d\tReset var\n\
 r\tRead var\n\
-s *v\tSet var as v. Where 0 >= v <= 255""");
+s *v\tSet var as v. Where 0 >= v <= 255"""));
 }
 void testapp::input_command(char * comm, byte * commln, int commc, int len)
 {

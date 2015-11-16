@@ -1,7 +1,10 @@
 #include "core.h"
 #include "testapp.h"
 #include "sysinf.h"
+#include "pingpong.h"
+#include "rfidreader.h"
 
+void(* resetFunc) (void) = 0; //declare reset function @ address 0
 
 Core::Core():
 u8g(new U8GLIB_SSD1306_128X64(U8G_I2C_OPT_NO_ACK)),
@@ -13,6 +16,8 @@ selectedMenuItem(0)
 	curApp = 0;
 	u8g->setFont(u8g_font_6x10);
 	extEeprom->initialize();
+	//EEPROM.write(1, 2);
+	delay(3);
 }
 
 App * Core::getCurApp()
@@ -37,16 +42,24 @@ char * Core::getAppInfo(byte id)
 	if(id == testappID)
 		return "App for testing";
 	if(id == sysinfID)
-		return sysinfDesc;
+		return (char*)sysinfDesc;
+	if(id == pingpongID)
+		return (char*)pingpongDesc;
+	if(id == rfidreaderID)
+		return (char*)rfidreaderDesc;
 }
 char * Core::getAppName(byte id)
 {
 	if(id == 1)
-		return "Spoofer";
+		return ("Spoofer");
 	if(id == testappID)
-		return "Test app";
+		return ("Test app");
 	if(id == sysinfID)
-		return sysinfName;
+		return (sysinfName);
+	if(id == pingpongID)
+		return (pingpongName);
+	if(id == rfidreaderID)
+		return (rfidreaderName);
 }
 void Core::print_apps()
 {
@@ -62,7 +75,7 @@ ID\tName\t\tDescr\n");
 	}
 	Serial.println("--------");
 }
-void Core::start_app(int id)
+void Core::run_app(byte id)
 {
 	if(id == 1)
 	{
@@ -74,6 +87,24 @@ void Core::start_app(int id)
 	{
 		setCurApp(new sysinf(this));
 	}
+	else if (id == pingpongID)
+	{
+		setCurApp(new pingpong(this));
+	}
+	else if (id == rfidreaderID)
+	{
+		setCurApp(new rfidreader(this));
+	}
+}
+void Core::start_app(byte ID)
+{
+	EEPROM.write(1, ID);
+	delay(3);
+	resetFunc();
+}
+void Core::start_app()
+{
+	run_app(EEPROM.read(1));
 }
 void Core::writeIntEEPROM(byte * b, int len, int Pos)
 {
@@ -134,7 +165,7 @@ void Core::update()
 	}
 	while(u8g->nextPage());
 }
-void Core::input_button(int b)
+void Core::input_button(byte b)
 {
 	if(GUImessage != "")
 	{
@@ -153,7 +184,20 @@ void Core::input_button(int b)
 			if(curApp != 0)
 				if(selectedMenuItem != curApp->getID())
 					start_app(selectedMenuItem);
-		}
+			else
+				start_app(selectedMenuItem);
+			closeMenu();
+			}
+		if(b == 1)
+			if(selectedMenuItem - 1 <= 0)
+				selectedMenuItem = 1;
+			else
+				selectedMenuItem --;
+		if(b == 7)
+			if(selectedMenuItem + 1 > AppCount)
+				selectedMenuItem = AppCount;
+			else
+				selectedMenuItem ++;
 		return;
 	}
 	if(b == 6)
@@ -166,28 +210,35 @@ void Core::input_button(int b)
 		curApp->input_button(b);
 	}
 }
-void(* resetFunc) (void) = 0; //declare reset function @ address 0
+void Core::input_button_press(byte b, unsigned long tm)
+{
+	if(curApp!=0)
+	{
+			curApp->input_button_press(b, tm);
+	}
+}
+
 
 
 void Core::print_all_commands()
 {
-	Serial.print("System commands: \n\
+	Serial.print(F("System commands: \n\
 !h\tPrint this help\n\
 !n\tName of current app\n\
 !i\tID of current app\n\
 !r\tReset arduino\n\
 !a\tGet all info about all apps\n\
 !s $id\tStart app with requested id\n\
-!m $msg\tShow message with $msg content");
+!m $msg\tShow message with $msg content"));
 	if(curApp != 0)
 	{
-		Serial.print("Commands of app: ");
+		Serial.print(F("Commands of app: "));
 		Serial.println(curApp->getName());
 		curApp->print_all_commands();
 	}
 	else
 	{
-		Serial.println("No application started now");
+		Serial.println(F("No application started now"));
 	}
 }
 void Core::input_command(char * comm, byte * commln, int commc, int len)
@@ -317,6 +368,8 @@ void Core::drawMenu()
 	for(byte i = 1; i<=AppCount; i++)
 	{
 		u8g->setPrintPos(22, 11 + 8*i);
+		if(selectedMenuItem == i)
+			u8g->print(">");
 		u8g->print(getAppName(i));
 	}
 }

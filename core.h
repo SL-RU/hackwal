@@ -11,8 +11,22 @@
 #define InternalEEPROMlen 100
 #define ExternalEEPROMlen 1000
 
+//void *operator new( size_t size );
+//void *operator new[]( size_t size );
+//void operator delete( void *ptr );
+//void operator delete[]( void *ptr );
 
-#define AppCount 3
+#define AppCount 5
+/*
+App:
+1 - rfid spoofer
+2 - test
+3 - sysinf
+4 - ping pong
+5 - rfid spoofer
+extEEPROM:
+0 - rfid spoofer & rfid reader
+*/
 
 class App;
 
@@ -25,14 +39,16 @@ public:
 	char * getAppInfo(byte id);
 	char *getAppName(byte id);
 	void print_apps();
-	void start_app(int id);
+	void start_app(byte id);
+	void start_app();
 	void writeIntEEPROM(byte * b, int len, int ID);
 	byte * readIntEEPROM(int len, int ID);
 	void writeExtEEPROM(byte b, word ID);
 	byte readExtEEPROM(word ID);
 	void update();
 	void drawGUI();
-	void input_button(int b);
+	void input_button(byte b);
+	void input_button_press(byte b, unsigned long tm);
 	void print_all_commands();
 	void input_command(char * comm, byte * commln, int commc, int len); //comm - массив длинной len со всеми символами комманд
 																		//commln - массив длинной commc где каждый байт - длинна комманды в массиве comm
@@ -55,6 +71,7 @@ private:
 	void drawHeader();
 	void drawMenuBG();
 	void drawMenu();
+	void run_app(byte id);
 };
 
 
@@ -62,11 +79,13 @@ class App
 {
 public:
 	App(Core * cr);
+	virtual ~App(){}
 	virtual byte getID() = 0;
 	virtual char * getName();
 	virtual void update() = 0;
 	virtual void drawGUI() = 0;
-	virtual void input_button(int ID) = 0;
+	virtual void input_button(byte ID) = 0;
+	virtual void input_button_press(byte ID, unsigned long tm) = 0;
 	virtual void print_all_commands() = 0;
 	virtual void input_command(char * comm, byte * commln, int commc, int len) = 0; //comm - массив длинной len со всеми символами комманд
 																			        //commln - массив длинной commc где каждый байт - длинна комманды в массиве comm

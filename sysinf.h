@@ -17,7 +17,8 @@ public:
   byte getID();
   void drawGUI();
   void drawButtons();
-  void input_button(int ID);
+  void input_button(byte ID);
+  void input_button_press(byte ID, unsigned long tm){}
   void print_all_commands();
   void input_command(char * comm, byte * commln, int commc, int len);
 private:

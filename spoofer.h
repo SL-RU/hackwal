@@ -18,20 +18,17 @@ class RFIDSpoofer : public App  //RFIDSpoofer class. Emulates rfid card with par
   */
 public:
   RFIDSpoofer(short Pin, Core *cr);
-  ~RFIDSpoofer();
-  void load_saved_cache();
-  void save_cache();
-  void set_content(byte * data);
-  byte * get_content();
+  //~RFIDSpoofer();
   void update();
   byte getID();
   char * getName();
   void drawGUI();
-  void input_button(int ID);
+  void input_button(byte ID);
+  void input_button_press(byte ID, unsigned long tm){}
 private:
   /*
     Cache:
-    Length - 32.
+    Length - 14.
     byte on 0 position - is cache here(1 or 0).
     1 ... 5 - five bytes of card content(code).
     6 ... 13 - 8 bytes of compiled and builded data to write.
@@ -40,8 +37,6 @@ private:
   void generate_cache();
   void spoofnow();
   void send_manchester(int clock_half, int signal);
-  void init();
-  void dispose();
 
   short pin;
   int intEepromAddr;

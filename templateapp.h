@@ -1,20 +1,20 @@
-#ifndef testappDEF
-#define testappDEF
+#ifndef templateappDEF
+#define templateappDEF
 #include "Arduino.h"
 #include <EEPROM.h>
 #include "core.h"
 
-#define testappID 2
-#define testappName "Test app"
-#define testappDesc "App for testing"
+#define templateappID 228
+#define templateappName "Template app"
+#define templateappDesc "This is clear app for copypasting"
 
-#define testappExtrenalEEPROMID 1
+#define templateappExtrenalEEPROMID -300
 
-class testapp : public App
+class templateapp : public App
 {
 public:
-  testapp(Core *cr);
-  ~testapp(){}
+  templateapp(Core *cr);
+  ~templateapp();
   void update();
   byte getID();
   void drawGUI();
@@ -23,9 +23,7 @@ public:
   void print_all_commands();
   void input_command(char * comm, byte * commln, int commc, int len);
 private:
-	byte var;
-	int intEepromAddr;
+  int intEepromAddr;
   int extEepromAddr;
-  void writeVar();
 };
 #endif
