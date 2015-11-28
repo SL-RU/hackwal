@@ -16,7 +16,7 @@
 //void operator delete( void *ptr );
 //void operator delete[]( void *ptr );
 
-#define AppCount 5
+#define AppCount 6
 /*
 App:
 1 - rfid spoofer

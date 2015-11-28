@@ -1,5 +1,6 @@
 #include <EEPROM.h>
 #include <U8glib.h>
+#include <OneWire.h>
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include <Eeprom24C32_64.h>
@@ -8,10 +9,10 @@
 // Define the Arduino PIN 
 #define coil_pin 9
 
-#define keypin1 7
-#define keypin2 6
+#define keypin1 2
+#define keypin2 3
 #define buttons_levels_count 6
-const short buttons_levels[] PROGMEM = {150, 300, 420, 550, 700, 850};
+const short buttons_levels[] PROGMEM = {190, 370, 550, 745, 970, 1010};
 unsigned long buttons2_stateST = 0, buttons1_stateST = 0;
 byte buttons1_state = 255, buttons2_state = 255;
 
@@ -92,7 +93,7 @@ void loop()
   //readSerial();
   core->update();
   //buttons_update();
-  delay(50);
+  delay(10);
   //core->update();
 }
 
@@ -118,13 +119,13 @@ void buttons_update()
 		{
 			if(buttons1_state != z)
 			{
-				core->input_button_press(buttons1_state*3, 0);
+				core->input_button_press(buttons1_state*3 + 2, 0);
 				buttons1_state = z;
 				buttons1_stateST = mil;
 			}
 			else
 			{
-				core->input_button_press(z*3, mil - buttons1_stateST);
+				core->input_button_press(z*3 + 2, mil - buttons1_stateST);
 			}
 		}
 		else
@@ -132,7 +133,7 @@ void buttons_update()
 			buttons1_state = 255;
 			buttons1_stateST = 0;
 			if(buttons1_state != 255)
-				core->input_button_press(buttons1_state*3, 0);
+				core->input_button_press(buttons1_state*3 + 2, 0);
 		}
 	}
 	else
@@ -141,8 +142,8 @@ void buttons_update()
 		{
 			if(mil - buttons1_stateST > 25)
 			{
-				core->input_button(buttons1_state*3);
-				core->input_button_press(buttons1_state*3, 0);
+				core->input_button(buttons1_state*3 + 2);
+				core->input_button_press(buttons1_state*3 + 2, 0);
 			}
 		}
 		buttons1_state = 255;
@@ -160,7 +161,7 @@ void buttons_update()
 				if(buttons2_state < 3)
 					core->input_button_press(buttons2_state*3 + 1, 0);
 				else
-					core->input_button_press((5 - buttons2_state) * 3 + 2, 0);
+					core->input_button_press((5 - buttons2_state) * 3, 0);
 				buttons2_state = z;
 				buttons2_stateST = mil;
 			}
@@ -169,7 +170,7 @@ void buttons_update()
 				if(buttons2_state < 3)
 					core->input_button_press(buttons2_state*3 + 1, mil - buttons2_stateST);
 				else
-					core->input_button_press((5 - buttons2_state) * 3 + 2, mil - buttons2_stateST);
+					core->input_button_press((5 - buttons2_state) * 3, mil - buttons2_stateST);
 			}
 		}
 		else
@@ -179,7 +180,7 @@ void buttons_update()
 				if(buttons2_state < 3)
 					core->input_button_press(buttons2_state*3 + 1, 0);
 				else
-					core->input_button_press((5 - buttons2_state) * 3 + 2, 0);
+					core->input_button_press((5 - buttons2_state) * 3, 0);
 			}
 			buttons2_state = 255;
 			buttons2_stateST = 0;
@@ -198,8 +199,8 @@ void buttons_update()
 				}
 				else
 				{
-					core->input_button((5 - buttons2_state) * 3 + 2);
-					core->input_button_press((5 - buttons2_state) * 3 + 2, 0);
+					core->input_button((5 - buttons2_state) * 3);
+					core->input_button_press((5 - buttons2_state) * 3 , 0);
 				}
 			}
 		}

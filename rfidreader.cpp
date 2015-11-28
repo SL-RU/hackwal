@@ -28,6 +28,7 @@ void rfidreader::update()
 void rfidreader::drawGUI()
 {
 	core->u8g->setPrintPos(0,20);
+	core->u8g->print("r");
 	core->u8g->print(inp);
 }
 

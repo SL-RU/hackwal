@@ -3,6 +3,8 @@
 #include "sysinf.h"
 #include "pingpong.h"
 #include "rfidreader.h"
+#include "rfidspoofer.h"
+#include "ibutton.h"
 
 void(* resetFunc) (void) = 0; //declare reset function @ address 0
 
@@ -38,15 +40,17 @@ App * Core::setCurApp(App * app)
 char * Core::getAppInfo(byte id)
 {
 	if(id == 1)
-		return "None";
+		return ("None");
 	if(id == testappID)
-		return "App for testing";
+		return ("App for testing");
 	if(id == sysinfID)
-		return (char*)sysinfDesc;
+		return (sysinfDesc);
 	if(id == pingpongID)
-		return (char*)pingpongDesc;
+		return (pingpongDesc);
 	if(id == rfidreaderID)
-		return (char*)rfidreaderDesc;
+		return (rfidreaderDesc);
+	if(id == ibuttonID)
+		return (ibuttonDesc);
 }
 char * Core::getAppName(byte id)
 {
@@ -60,6 +64,8 @@ char * Core::getAppName(byte id)
 		return (pingpongName);
 	if(id == rfidreaderID)
 		return (rfidreaderName);
+	if(id == ibuttonID)
+		return (ibuttonName);
 }
 void Core::print_apps()
 {
@@ -79,7 +85,7 @@ void Core::run_app(byte id)
 {
 	if(id == 1)
 	{
-//		setCurApp
+		setCurApp(new rfidspoofer(this));
 	}else if (id == testappID)
 	{
 		setCurApp(new testapp(this));		
@@ -95,12 +101,19 @@ void Core::run_app(byte id)
 	{
 		setCurApp(new rfidreader(this));
 	}
+	else if (id == ibuttonID)
+	{
+		setCurApp(new ibutton(this));
+	}
 }
 void Core::start_app(byte ID)
 {
-	EEPROM.write(1, ID);
-	delay(3);
-	resetFunc();
+	if(ID>=1 && ID<=AppCount)
+	{
+		EEPROM.write(1, ID);
+		delay(3);
+		resetFunc();
+	}
 }
 void Core::start_app()
 {

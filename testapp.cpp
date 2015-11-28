@@ -28,9 +28,9 @@ void testapp::drawGUI()
 	core->u8g->setPrintPos(0, 20);
 	core->u8g->print(var);
 	core->u8g->setPrintPos(0, 30);
-	core->u8g->print(analogRead(6));
+	core->u8g->print(analogRead(0));
 	core->u8g->setPrintPos(0, 40);
-	core->u8g->print(analogRead(7));
+	core->u8g->print(analogRead(1));
 	core->u8g->setPrintPos(0, 50);
 	core->u8g->print(millis());
 }
