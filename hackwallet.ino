@@ -1,12 +1,36 @@
+#include <Wire.h>
 #include <EEPROM.h>
 #include <U8glib.h>
 #include <OneWire.h>
 #include <SoftwareSerial.h>
-#include <Wire.h>
-#include <Eeprom24C32_64.h>
 #include "core.h"
 #include "leOS2.h"
 // Define the Arduino PIN 
+/*
+A0 - input voltage(before boost)
+A1 - Vcc
+A2 - keyboard line 1
+A3 - keyboard line 2
+A4,A5 - I2C
+A6 - 
+A7 - 
+D1,D2 - rx,tx
+D2,D3 software serial for RFID reader
+D3
+D4
+D5
+D6
+D7
+D8
+D9
+D10 - RFID spoofer
+D11
+D12
+D13 - LED
+*/
+
+
+
 #define coil_pin 9
 
 #define keypin1 2
@@ -25,6 +49,7 @@ void readSerial();
 
 void setup() { 
   Serial.begin(9600);
+  Wire.begin();
   while(!Serial);
 
   os.begin();
@@ -110,8 +135,14 @@ byte what_diap(short val)
 }
 void buttons_update()
 {
+//	if(lcdON)
+
 	unsigned long mil = millis();
 	short v = analogRead(keypin1);
+
+	if(((unsigned long)(mil/2000))%2 == 0)
+		core->mesure_battery();
+	core->mesure_battery();
 	if(v > 50)
 	{
 		byte z = what_diap(v);

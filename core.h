@@ -2,7 +2,6 @@
 #define CORE_DEF
 #include "Arduino.h"
 #include <Wire.h>
-#include <Eeprom24C32_64.h>
 #include <EEPROM.h>
 #include <U8glib.h>
 
@@ -38,17 +37,22 @@ public:
 	App * setCurApp(App * app);
 	char * getAppInfo(byte id);
 	char *getAppName(byte id);
+
 	void print_apps();
 	void start_app(byte id);
 	void start_app();
+
 	void writeIntEEPROM(byte * b, int len, int ID);
 	byte * readIntEEPROM(int len, int ID);
-	void writeExtEEPROM(byte b, word ID);
-	byte readExtEEPROM(word ID);
+	void writeExtEEPROM(byte b, unsigned int ID);
+	byte readExtEEPROM(unsigned int ID);
+
 	void update();
 	void drawGUI();
+
 	void input_button(byte b);
 	void input_button_press(byte b, unsigned long tm);
+	
 	void print_all_commands();
 	void input_command(char * comm, byte * commln, int commc, int len); //comm - массив длинной len со всеми символами комманд
 																		//commln - массив длинной commc где каждый байт - длинна комманды в массиве comm
@@ -59,13 +63,18 @@ public:
 	void ResetArd();
 	int freeRam();
 
+	byte getBatteryState(); //battery state. If val less, then 101, then - percents.
+
+	void mesure_battery();
+
 	U8GLIB_SSD1306_128X64 * u8g;
-	Eeprom24C32_64 * extEeprom;
+	byte lcdON;
 private:
 	App * curApp;
 	String GUImessage;
 	byte GUImenu;
 	byte selectedMenuItem;
+	byte batteryState;
 
 	void drawMessage();
 	void drawHeader();

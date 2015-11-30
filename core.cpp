@@ -10,16 +10,16 @@ void(* resetFunc) (void) = 0; //declare reset function @ address 0
 
 Core::Core():
 u8g(new U8GLIB_SSD1306_128X64(U8G_I2C_OPT_NO_ACK)),
-extEeprom(new Eeprom24C32_64(EEPROM_ADDRESS)),
 GUImessage(""),
 GUImenu(0),
-selectedMenuItem(0)
+selectedMenuItem(0),
+batteryState(255),
+lcdON(1)
 {
 	curApp = 0;
 	u8g->setFont(u8g_font_6x10);
-	extEeprom->initialize();
-	//EEPROM.write(1, 2);
 	delay(3);
+	mesure_battery();
 }
 
 App * Core::getCurApp()
@@ -137,17 +137,30 @@ byte * Core::readIntEEPROM(int len, int Pos)
 }
 
 
-void Core::writeExtEEPROM(byte b, word Pos)
+void Core::writeExtEEPROM(byte b, unsigned int Pos)
 {
-	extEeprom->writeByte(Pos, b);
+	Wire.beginTransmission(EEPROM_ADDRESS);
+	Wire.write((int)(Pos >> 8));   // MSB
+  	Wire.write((int)(Pos & 0xFF)); // LSB
+  	Wire.write(b);
+  	Wire.endTransmission();
+  	delay(5);
 }
-byte Core::readExtEEPROM(word Pos)
+byte Core::readExtEEPROM(unsigned int Pos)
 {
-//	byte * b = new byte[len];
-//	for(int i = 0; i<len; i++)
-//	{
-	return extEeprom->readByte(Pos);
-//	}
+
+	byte rdata = 0xFF;
+ 
+	Wire.beginTransmission(EEPROM_ADDRESS);
+	Wire.write((int)(Pos >> 8));   // MSB
+	Wire.write((int)(Pos & 0xFF)); // LSB
+	Wire.endTransmission();
+
+	Wire.requestFrom(EEPROM_ADDRESS,1);
+
+	if (Wire.available()) rdata = Wire.read();
+
+	return rdata;
 }
 
 void Core::update()
@@ -345,9 +358,14 @@ void Core::drawHeader()
 	{
 		u8g->print(curApp->getName());
 	}
-	u8g->print("  ");
+
+	u8g->setPrintPos(90, 7);
 	u8g->print(freeRam());
-	u8g->print("/2048");
+	u8g->print("|");
+	if(batteryState >= 100)
+		u8g->print("CH");
+	else
+		u8g->print(batteryState);
 	u8g->drawLine(0, 9, 128, 9);
 }
 void Core::drawMenuBG()
@@ -411,6 +429,18 @@ int Core::freeRam () {
   extern int __heap_start, *__brkval;
   int v;
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+}
+
+
+void Core::mesure_battery()
+{
+	short s = analogRead(0);
+	if( s > 1015)
+		batteryState = 255;
+	else
+	{
+		batteryState = s/10;
+	}
 }
 
 App::App(Core * cr):
