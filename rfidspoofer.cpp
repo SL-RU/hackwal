@@ -7,8 +7,8 @@ rfidspoofer::rfidspoofer(Core * cr):
 App(cr),
 cache(new byte[32]),
 pin(9), //Set pin
-intEepromAddr(rfidspooferID * 20),
-extEepromAddr(rfidspooferExtrenalEEPROMID * 1024),
+intEepromAddr(rfidspooferID * InternalEEPROMlen),
+extEepromAddr(rfidspooferExtrenalEEPROMID * ExternalEEPROMlen),
 status(0)
 {
 	digitalWrite(pin, OUTPUT);

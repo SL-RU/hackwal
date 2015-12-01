@@ -3,7 +3,7 @@
 
 sysinf::sysinf(Core *cr):
 App(cr),
-intEepromAddr(sysinfID * 20),
+intEepromAddr(sysinfID * InternalEEPROMlen),
 buttonsbuf(String("                     ")),
 selButton(0)
 {

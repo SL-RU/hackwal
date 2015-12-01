@@ -6,10 +6,12 @@
 #include "core.h"
 
 #define ibuttonID 6
-#define ibuttonName "IButton"
+#define ibuttonName "ibut"
 #define ibuttonDesc "This is app for reading/writing ibutton keys"
 
-#define ibuttonExtrenalEEPROMID 2
+
+#define ibuttonExtrenalEEPROMID 10
+//len = 10
 
 class ibutton : public App
 {

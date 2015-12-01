@@ -1,5 +1,5 @@
 {
-    "arduino_folder": "/home/sl_ru/prg/arduino-1.0.6", 
+    "arduino_folder": "/home/sl_ru/prg/arduino-1.6.5", 
     "baudrate": 4, 
     "board": 3, 
     "display_mode": 0, 

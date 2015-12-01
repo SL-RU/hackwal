@@ -7,15 +7,15 @@
 
 
 #define EEPROM_ADDRESS  0x50
-#define InternalEEPROMlen 100
-#define ExternalEEPROMlen 1000
+#define InternalEEPROMlen 20
+#define ExternalEEPROMlen 1024
 
 //void *operator new( size_t size );
 //void *operator new[]( size_t size );
 //void operator delete( void *ptr );
 //void operator delete[]( void *ptr );
 
-#define AppCount 6
+#define AppCount 7
 /*
 App:
 1 - rfid spoofer
@@ -23,8 +23,12 @@ App:
 3 - sysinf
 4 - ping pong
 5 - rfid spoofer
+6 - ibutton
+7 - notes
 extEEPROM:
-0 - rfid spoofer & rfid reader
+[0; 9] - rfid spoofer & rfid reader
+[10; 19] - ibutton
+[20; 90] - notes
 */
 
 class App;
@@ -35,17 +39,23 @@ public:
 	Core();
 	App * getCurApp();
 	App * setCurApp(App * app);
-	char * getAppInfo(byte id);
-	char *getAppName(byte id);
+	const __FlashStringHelper * getAppInfo(byte id);
+	char* getAppName(byte id);
 
 	void print_apps();
 	void start_app(byte id);
 	void start_app();
 
 	void writeIntEEPROM(byte * b, int len, int ID);
+	byte readIntEEPROM(int ID);
+	void writeIntEEPROM(byte b, int ID);
 	byte * readIntEEPROM(int len, int ID);
 	void writeExtEEPROM(byte b, unsigned int ID);
 	byte readExtEEPROM(unsigned int ID);
+	void writeIntIntEEPROM(int b, int ID);
+	int readIntIntEEPROM(int ID);
+	void writeIntExtEEPROM(int b, unsigned int ID);
+	int readIntExtEEPROM(unsigned int ID);
 
 	void update();
 	void drawGUI();

@@ -5,7 +5,7 @@
 #include "core.h"
 
 #define pingpongID 4
-#define pingpongName "Ping pong"
+#define pingpongName "pipo"
 #define pingpongDesc "Simple ping pong game"
 
 

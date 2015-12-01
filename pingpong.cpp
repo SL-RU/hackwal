@@ -3,7 +3,7 @@
 
 pingpong::pingpong(Core *cr):
 App(cr),
-intEepromAddr(pingpongID * 20),
+intEepromAddr(pingpongID * InternalEEPROMlen),
 x(0),
 y(0),
 lastTm(0),

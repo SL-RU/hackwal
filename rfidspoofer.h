@@ -6,6 +6,7 @@
 
 #define rfidspooferID 1
 #define rfidspooferExtrenalEEPROMID 0
+//len = 10
 
 class rfidspoofer : public App  //rfidspoofer class. Emulates rfid card with particular code.
 {

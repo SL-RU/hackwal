@@ -5,10 +5,10 @@
 #include "core.h"
 
 #define testappID 2
-#define testappName "Test app"
+#define testappName "tsta"
 #define testappDesc "App for testing"
 
-#define testappExtrenalEEPROMID 1
+//#define testappExtrenalEEPROMID 1
 
 class testapp : public App
 {
@@ -23,7 +23,7 @@ public:
   void print_all_commands();
   void input_command(char * comm, byte * commln, int commc, int len);
 private:
-	byte var;
+	int var;
 	int intEepromAddr;
   int extEepromAddr;
   void writeVar();

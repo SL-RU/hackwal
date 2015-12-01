@@ -3,8 +3,8 @@
 
 templateapp::templateapp(Core *cr):
 App(cr),
-intEepromAddr(templateappID * 20),
-extEepromAddr(templateappExtrenalEEPROMID * 1024)
+intEepromAddr(templateappID * InternalEEPROMlen),
+extEepromAddr(templateappExtrenalEEPROMID * ExternalEEPROMlen)
 {
 }
 

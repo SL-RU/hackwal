@@ -2,8 +2,8 @@
 
 rfidreader::rfidreader(Core *cr):
 App(cr),
-intEepromAddr(rfidreaderID * 20),
-extEepromAddr(rfidreaderExtrenalEEPROMID * 1024),
+intEepromAddr(rfidreaderID * InternalEEPROMlen),
+extEepromAddr(rfidreaderExtrenalEEPROMID * ExternalEEPROMlen),
 ser(3,2),
 inp("")
 {

@@ -5,7 +5,7 @@
 #include "core.h"
 
 #define sysinfID 3
-#define sysinfName "sysinfo"
+#define sysinfName "sysi"
 #define sysinfDesc "System information"
 
 class sysinf : public App

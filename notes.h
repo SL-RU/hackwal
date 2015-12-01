@@ -1,20 +1,21 @@
-#ifndef templateappDEF
-#define templateappDEF
+#ifndef notesappDEF
+#define notesappDEF
 #include "Arduino.h"
 #include <EEPROM.h>
 #include "core.h"
 
-#define templateappID 228
-#define templateappName "tmap"
-#define templateappDesc "This is clear app for copypasting"
+#define notesID 7
+#define notesName "note"
+#define notesDesc "Simple notes app"
 
-#define templateappExtrenalEEPROMID -300
+#define notesExtrenalEEPROMID 20
+//len = 70
 
-class templateapp : public App
+class notesapp : public App
 {
 public:
-  templateapp(Core *cr);
-  ~templateapp();
+  notesapp(Core *cr);
+  ~notesapp();
   void update();
   byte getID();
   void drawGUI();

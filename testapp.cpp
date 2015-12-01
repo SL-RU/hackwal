@@ -3,11 +3,11 @@
 
 testapp::testapp(Core *cr):
 App(cr),
-intEepromAddr(testappID * 20),
-extEepromAddr(testappExtrenalEEPROMID * 1024)
+intEepromAddr(testappID * InternalEEPROMlen),
+extEepromAddr(testappExtrenalEEPROMID * ExternalEEPROMlen)
 {
 
-	var = core->readExtEEPROM(extEepromAddr);
+	var = core->readIntIntEEPROM(intEepromAddr);
 }
 
 
@@ -42,7 +42,7 @@ void testapp::input_button(byte ID)
 }
 void testapp::writeVar()
 {
-	core->writeExtEEPROM(var, extEepromAddr);
+	core->writeIntIntEEPROM(var, intEepromAddr);
 }
 void testapp::print_all_commands()
 {

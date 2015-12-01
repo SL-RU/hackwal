@@ -5,6 +5,7 @@
 #include "rfidreader.h"
 #include "rfidspoofer.h"
 #include "ibutton.h"
+#include "notes.h"
 
 void(* resetFunc) (void) = 0; //declare reset function @ address 0
 
@@ -37,27 +38,29 @@ App * Core::setCurApp(App * app)
 	return app;
 }
 
-char * Core::getAppInfo(byte id)
+const __FlashStringHelper * Core::getAppInfo(byte id)
 {
 	if(id == 1)
-		return ("None");
+		return F("None");
 	if(id == testappID)
-		return ("App for testing");
+		return F("App for testing");
 	if(id == sysinfID)
-		return (sysinfDesc);
+		return F(sysinfDesc);
 	if(id == pingpongID)
-		return (pingpongDesc);
+		return F(pingpongDesc);
 	if(id == rfidreaderID)
-		return (rfidreaderDesc);
+		return F(rfidreaderDesc);
 	if(id == ibuttonID)
-		return (ibuttonDesc);
+		return F(ibuttonDesc);
+	if(id == notesID)
+		return F(notesDesc);
 }
 char * Core::getAppName(byte id)
 {
 	if(id == 1)
-		return ("Spoofer");
+		return ("spfr");
 	if(id == testappID)
-		return ("Test app");
+		return (testappName);
 	if(id == sysinfID)
 		return (sysinfName);
 	if(id == pingpongID)
@@ -66,11 +69,13 @@ char * Core::getAppName(byte id)
 		return (rfidreaderName);
 	if(id == ibuttonID)
 		return (ibuttonName);
+	if(id == notesID)
+		return (notesName);
 }
 void Core::print_apps()
 {
-	Serial.print("Apps:\n\
-ID\tName\t\tDescr\n");
+	Serial.print(F("Apps:\n\
+ID\tName\t\tDescr\n"));
 	for(byte i = 1; i<=AppCount; i++)
 	{
 		Serial.print(i);
@@ -79,7 +84,7 @@ ID\tName\t\tDescr\n");
 		Serial.print("\t\t");
 		Serial.println(getAppInfo(i));
 	}
-	Serial.println("--------");
+	Serial.println(F("--------"));
 }
 void Core::run_app(byte id)
 {
@@ -105,6 +110,10 @@ void Core::run_app(byte id)
 	{
 		setCurApp(new ibutton(this));
 	}
+	else if(id == notesID)
+	{
+		setCurApp(new notesapp(this));
+	}
 }
 void Core::start_app(byte ID)
 {
@@ -119,6 +128,8 @@ void Core::start_app()
 {
 	run_app(EEPROM.read(1));
 }
+
+
 void Core::writeIntEEPROM(byte * b, int len, int Pos)
 {
 	for(int i = 0; i<len; i++)
@@ -135,8 +146,15 @@ byte * Core::readIntEEPROM(int len, int Pos)
 		b[i] = EEPROM.read(Pos + i);
 	}
 }
-
-
+void Core::writeIntEEPROM(byte b, int Pos)
+{
+	EEPROM.write(Pos, b);
+	delay(4);
+}
+byte Core::readIntEEPROM(int Pos)
+{
+	return EEPROM.read(Pos);
+}
 void Core::writeExtEEPROM(byte b, unsigned int Pos)
 {
 	Wire.beginTransmission(EEPROM_ADDRESS);
@@ -161,6 +179,36 @@ byte Core::readExtEEPROM(unsigned int Pos)
 	if (Wire.available()) rdata = Wire.read();
 
 	return rdata;
+}
+void Core::writeIntIntEEPROM(int b, int ID)
+{
+	writeIntEEPROM((byte)(b>>24), ID);
+	writeIntEEPROM((byte)(b>>16), ID);
+	writeIntEEPROM((byte)(b>>8), ID);
+	writeIntEEPROM((byte)(b), ID);
+}
+int Core::readIntIntEEPROM(int ID)
+{
+	int i = (int)readIntEEPROM(ID)<<24;
+	i |=    (int)readIntEEPROM(ID)<<16;
+	i |=    (int)readIntEEPROM(ID)<<8;
+	i |=    (int)readIntEEPROM(ID);
+	return i;
+}
+void Core::writeIntExtEEPROM(int b, unsigned int ID)
+{
+	writeExtEEPROM((byte)(b>>24), ID);
+	writeExtEEPROM((byte)(b>>16), ID);
+	writeExtEEPROM((byte)(b>>8), ID);
+	writeExtEEPROM((byte)(b), ID);
+}
+int Core::readIntExtEEPROM(unsigned int ID)
+{
+	int i = (int)readExtEEPROM(ID)<<24;
+	i |=    (int)readExtEEPROM(ID)<<16;
+	i |=    (int)readExtEEPROM(ID)<<8;
+	i |=    (int)readExtEEPROM(ID);
+	return i;
 }
 
 void Core::update()
@@ -195,7 +243,7 @@ void Core::input_button(byte b)
 {
 	if(GUImessage != "")
 	{
-		if(b == 4)
+		if(b != 255)
 			GUImessage = "";
 		return;
 	}
@@ -224,6 +272,11 @@ void Core::input_button(byte b)
 				selectedMenuItem = AppCount;
 			else
 				selectedMenuItem ++;
+
+		if(b == 2)
+		{
+			showMessage(getAppInfo(selectedMenuItem));
+		}
 		return;
 	}
 	if(b == 6)
@@ -395,7 +448,7 @@ void Core::drawMenu()
 {
 	drawMenuBG();
 	u8g->setPrintPos(22, 11);
-	u8g->print("Select app:");
+	u8g->print(F("Select app:"));
 	for(byte i = 1; i<=AppCount; i++)
 	{
 		u8g->setPrintPos(22, 11 + 8*i);

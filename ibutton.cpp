@@ -4,8 +4,8 @@
 
 ibutton::ibutton(Core *cr):
 App(cr),
-intEepromAddr(ibuttonID * 20),
-extEepromAddr(ibuttonExtrenalEEPROMID * 1024),
+intEepromAddr(ibuttonID * InternalEEPROMlen),
+extEepromAddr(ibuttonExtrenalEEPROMID * ExternalEEPROMlen),
 ds(10),
 read(0),
 write(0)

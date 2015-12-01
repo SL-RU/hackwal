@@ -29,6 +29,24 @@ D12
 D13 - LED
 */
 
+/*
+Buttons:
+
+0     1     2
+
+3     4     5
+
+6     7     8
+
+
+System keys:
+6 - app list
+
+Normal use:
+2 - show info about element
+0 - edit element
+8 - current app menu
+*/
 
 
 #define coil_pin 9

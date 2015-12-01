@@ -6,10 +6,11 @@
 #include "core.h"
 
 #define rfidreaderID 5
-#define rfidreaderName "RFID reader"
+#define rfidreaderName "rfre"
 #define rfidreaderDesc "Read data of rfid cards"
 
 #define rfidreaderExtrenalEEPROMID 0
+//len = 10
 
 class rfidreader : public App
 {
