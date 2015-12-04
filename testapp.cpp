@@ -3,8 +3,7 @@
 
 testapp::testapp(Core *cr):
 App(cr),
-intEepromAddr(testappID * InternalEEPROMlen),
-extEepromAddr(testappExtrenalEEPROMID * ExternalEEPROMlen)
+intEepromAddr(testappID * InternalEEPROMlen)
 {
 
 	var = core->readIntIntEEPROM(intEepromAddr);
@@ -48,7 +47,7 @@ void testapp::print_all_commands()
 {
 	Serial.print(F("""d\tReset var\n\
 r\tRead var\n\
-s *v\tSet var as v. Where 0 >= v <= 255"""));
+s *v\tSet var as v"""));
 }
 void testapp::input_command(char * comm, byte * commln, int commc, int len)
 {
@@ -72,7 +71,7 @@ void testapp::input_command(char * comm, byte * commln, int commc, int len)
 				{
 					n+=(char)comm[i];
 				}
-				var = n.toInt();
+				var = atol(n.c_str());
 				writeVar();
 			}
 		}

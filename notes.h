@@ -23,8 +23,23 @@ public:
   void input_button_press(byte ID, unsigned long tm){}
   void print_all_commands();
   void input_command(char * comm, byte * commln, int commc, int len);
+
+  String get_note(unsigned int id);
+  unsigned int add_new_note(String s);
 private:
   int intEepromAddr;
   int extEepromAddr;
+
+  unsigned int selectedNote = 0;
+
+#define notePreviewLen 21
+#define notePreviewCount 6
+  char ** notesCache;
+  void clearCache();
+  byte selectedPreview = 0;
+  void buildCache();
+
+  unsigned int NotesCount = 0;
+  unsigned int get_note_pos(unsigned int id);
 };
 #endif

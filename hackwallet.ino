@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <EEPROM.h>
-#include <U8glib.h>
+#include <U8gl.h>
 #include <OneWire.h>
 #include <SoftwareSerial.h>
 #include "core.h"
@@ -45,7 +45,7 @@ System keys:
 Normal use:
 2 - show info about element
 0 - edit element
-8 - current app menu
+8 - current app menu(help)
 */
 
 

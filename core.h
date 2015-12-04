@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include <Wire.h>
 #include <EEPROM.h>
-#include <U8glib.h>
+#include <U8gl.h>
 
 
 #define EEPROM_ADDRESS  0x50
@@ -15,16 +15,16 @@
 //void operator delete( void *ptr );
 //void operator delete[]( void *ptr );
 
-#define AppCount 7
+#define AppCount 5
 /*
 App:
 1 - rfid spoofer
 2 - test
 3 - sysinf
-4 - ping pong
+4 - ibutton
 5 - rfid spoofer
-6 - ibutton
-7 - notes
+//4 - ping pong
+//7 - notes
 extEEPROM:
 [0; 9] - rfid spoofer & rfid reader
 [10; 19] - ibutton
@@ -51,11 +51,11 @@ public:
 	void writeIntEEPROM(byte b, int ID);
 	byte * readIntEEPROM(int len, int ID);
 	void writeExtEEPROM(byte b, unsigned int ID);
-	byte readExtEEPROM(unsigned int ID);
-	void writeIntIntEEPROM(int b, int ID);
-	int readIntIntEEPROM(int ID);
-	void writeIntExtEEPROM(int b, unsigned int ID);
-	int readIntExtEEPROM(unsigned int ID);
+	byte readExtEEPROM(int unsigned ID);
+	void writeIntIntEEPROM(unsigned b, unsigned int ID);
+	unsigned int readIntIntEEPROM(unsigned int ID);
+	void writeIntExtEEPROM(unsigned int b, unsigned int ID);
+	unsigned int readIntExtEEPROM(unsigned int ID);
 
 	void update();
 	void drawGUI();

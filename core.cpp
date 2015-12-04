@@ -1,11 +1,11 @@
 #include "core.h"
 #include "testapp.h"
 #include "sysinf.h"
-#include "pingpong.h"
+//#include "pingpong.h"
 #include "rfidreader.h"
 #include "rfidspoofer.h"
 #include "ibutton.h"
-#include "notes.h"
+//#include "notes.h"
 
 void(* resetFunc) (void) = 0; //declare reset function @ address 0
 
@@ -46,14 +46,14 @@ const __FlashStringHelper * Core::getAppInfo(byte id)
 		return F("App for testing");
 	if(id == sysinfID)
 		return F(sysinfDesc);
-	if(id == pingpongID)
-		return F(pingpongDesc);
+	//if(id == pingpongID)
+	//	return F(pingpongDesc);
 	if(id == rfidreaderID)
 		return F(rfidreaderDesc);
 	if(id == ibuttonID)
 		return F(ibuttonDesc);
-	if(id == notesID)
-		return F(notesDesc);
+	//if(id == notesID)
+	//	return F(notesDesc);
 }
 char * Core::getAppName(byte id)
 {
@@ -63,14 +63,14 @@ char * Core::getAppName(byte id)
 		return (testappName);
 	if(id == sysinfID)
 		return (sysinfName);
-	if(id == pingpongID)
-		return (pingpongName);
+	//if(id == pingpongID)
+	//	return (pingpongName);
 	if(id == rfidreaderID)
 		return (rfidreaderName);
 	if(id == ibuttonID)
 		return (ibuttonName);
-	if(id == notesID)
-		return (notesName);
+	//if(id == notesID)
+	//	return (notesName);
 }
 void Core::print_apps()
 {
@@ -98,10 +98,10 @@ void Core::run_app(byte id)
 	{
 		setCurApp(new sysinf(this));
 	}
-	else if (id == pingpongID)
-	{
-		setCurApp(new pingpong(this));
-	}
+	//else if (id == pingpongID)
+	//{
+	//	setCurApp(new pingpong(this));
+	//}
 	else if (id == rfidreaderID)
 	{
 		setCurApp(new rfidreader(this));
@@ -110,10 +110,10 @@ void Core::run_app(byte id)
 	{
 		setCurApp(new ibutton(this));
 	}
-	else if(id == notesID)
-	{
-		setCurApp(new notesapp(this));
-	}
+	//else if(id == notesID)
+	//{
+	//	setCurApp(new notesapp(this));
+	//}
 }
 void Core::start_app(byte ID)
 {
@@ -149,7 +149,7 @@ byte * Core::readIntEEPROM(int len, int Pos)
 void Core::writeIntEEPROM(byte b, int Pos)
 {
 	EEPROM.write(Pos, b);
-	delay(4);
+	//delay(4);
 }
 byte Core::readIntEEPROM(int Pos)
 {
@@ -180,35 +180,30 @@ byte Core::readExtEEPROM(unsigned int Pos)
 
 	return rdata;
 }
-void Core::writeIntIntEEPROM(int b, int ID)
+void Core::writeIntIntEEPROM(unsigned int b, unsigned int ID)
 {
-	writeIntEEPROM((byte)(b>>24), ID);
-	writeIntEEPROM((byte)(b>>16), ID);
-	writeIntEEPROM((byte)(b>>8), ID);
-	writeIntEEPROM((byte)(b), ID);
+	//Serial.println((byte)((b>>24) & 0xFF));
+	//Serial.println((byte)((b>>16) & 0xFF));
+	//Serial.println((byte)((b>>8) & 0xFF));
+	//Serial.println((byte)((b>>0) & 0xFF));
+	writeIntEEPROM((byte)((b    ) & 0xFF), ID    );
+	writeIntEEPROM((byte)((b>> 8) & 0xFF), ID + 1);
 }
-int Core::readIntIntEEPROM(int ID)
+unsigned int Core::readIntIntEEPROM(unsigned int ID)
 {
-	int i = (int)readIntEEPROM(ID)<<24;
-	i |=    (int)readIntEEPROM(ID)<<16;
-	i |=    (int)readIntEEPROM(ID)<<8;
-	i |=    (int)readIntEEPROM(ID);
-	return i;
+	return  ((readIntEEPROM(ID + 1)<<8 ) & 0xFF00    ) +
+	        ((readIntEEPROM(ID    )    ) & 0xFF      );
 }
-void Core::writeIntExtEEPROM(int b, unsigned int ID)
+void Core::writeIntExtEEPROM(unsigned int b, unsigned int ID)
 {
-	writeExtEEPROM((byte)(b>>24), ID);
-	writeExtEEPROM((byte)(b>>16), ID);
-	writeExtEEPROM((byte)(b>>8), ID);
-	writeExtEEPROM((byte)(b), ID);
+	writeExtEEPROM((byte)((b>> 8) & 0xFF), ID + 1);
+	writeExtEEPROM((byte)((b    ) & 0xFF), ID    );
 }
-int Core::readIntExtEEPROM(unsigned int ID)
+unsigned int Core::readIntExtEEPROM(unsigned int ID)
 {
-	int i = (int)readExtEEPROM(ID)<<24;
-	i |=    (int)readExtEEPROM(ID)<<16;
-	i |=    (int)readExtEEPROM(ID)<<8;
-	i |=    (int)readExtEEPROM(ID);
-	return i;
+	return  ((readExtEEPROM(ID + 1)<<8 ) & 0xFF00    ) +
+	        ((readExtEEPROM(ID    )    ) & 0xFF      );
+
 }
 
 void Core::update()
@@ -449,9 +444,20 @@ void Core::drawMenu()
 	drawMenuBG();
 	u8g->setPrintPos(22, 11);
 	u8g->print(F("Select app:"));
-	for(byte i = 1; i<=AppCount; i++)
+	byte s = selectedMenuItem;
+	byte e = selectedMenuItem;
+
+	while(e - s + 1 < 6 && e - s + 1 < AppCount)
 	{
-		u8g->setPrintPos(22, 11 + 8*i);
+		if(s - 1 >= 1)
+			s--;
+		if(e + 1 <= AppCount && e - s + 1 < 6)
+			e++;
+	}
+
+	for(byte i = s; i<=e; i++)
+	{
+		u8g->setPrintPos(22, 11 + 8*(i - s + 1));
 		if(selectedMenuItem == i)
 			u8g->print(">");
 		u8g->print(getAppName(i));

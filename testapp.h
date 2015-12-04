@@ -23,7 +23,7 @@ public:
   void print_all_commands();
   void input_command(char * comm, byte * commln, int commc, int len);
 private:
-	int var;
+	unsigned int var;
 	int intEepromAddr;
   int extEepromAddr;
   void writeVar();
