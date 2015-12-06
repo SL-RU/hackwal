@@ -5,7 +5,7 @@
 #include <EEPROM.h>
 #include "core.h"
 
-#define rfidreaderID 5
+#define rfidreaderID 2
 #define rfidreaderName "rfre"
 #define rfidreaderDesc "Read data of rfid cards"
 

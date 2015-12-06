@@ -28,9 +28,8 @@ public:
   
 
   int add_cur_key();
-  byte* get_key(int id);
-  char* get_key_note(int id);
   void set_key_note(int id, String note);
+  int isCurInDB(); //if db contains key - return it's ID, else - (-1)
 
   void generate_cache();
   void clear_cache();
@@ -49,10 +48,16 @@ private:
   byte* Data;
   
   OneWire ds;
-  bool read, write, addck;
+  byte curState, addck;
 
-  byte readMenuShow;
-  void readMenuInput(byte k);
+  byte curMenuShow, 
+      writeResult; //1 - success
+                   //2 - All zeros or all FF
+                   //3 - key don't rewritable
+                   //4 - Error while writing
+
+
   void drawreadMenu();
+  void drawwriteMenu();
 };
 #endif

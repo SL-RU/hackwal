@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include <Wire.h>
 #include <EEPROM.h>
-#include <U8gl.h>
+#include <U8glib.h>
 
 
 #define EEPROM_ADDRESS  0x50
@@ -15,7 +15,7 @@
 //void operator delete( void *ptr );
 //void operator delete[]( void *ptr );
 
-#define AppCount 5
+#define AppCount 4
 /*
 App:
 1 - rfid spoofer

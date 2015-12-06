@@ -1,5 +1,5 @@
 #include "core.h"
-#include "testapp.h"
+//#include "testapp.h"
 #include "sysinf.h"
 //#include "pingpong.h"
 #include "rfidreader.h"
@@ -18,7 +18,7 @@ batteryState(255),
 lcdON(1)
 {
 	curApp = 0;
-	u8g->setFont(u8g_font_6x10);
+	u8g->setFont(u8g_font_6x10r);
 	delay(3);
 	mesure_battery();
 }
@@ -42,8 +42,8 @@ const __FlashStringHelper * Core::getAppInfo(byte id)
 {
 	if(id == 1)
 		return F("None");
-	if(id == testappID)
-		return F("App for testing");
+	//if(id == testappID)
+	//	return F("App for testing");
 	if(id == sysinfID)
 		return F(sysinfDesc);
 	//if(id == pingpongID)
@@ -59,8 +59,8 @@ char * Core::getAppName(byte id)
 {
 	if(id == 1)
 		return ("spfr");
-	if(id == testappID)
-		return (testappName);
+	//if(id == testappID)
+	//	return (testappName);
 	if(id == sysinfID)
 		return (sysinfName);
 	//if(id == pingpongID)
@@ -74,27 +74,28 @@ char * Core::getAppName(byte id)
 }
 void Core::print_apps()
 {
-	Serial.print(F("Apps:\n\
-ID\tName\t\tDescr\n"));
-	for(byte i = 1; i<=AppCount; i++)
-	{
-		Serial.print(i);
-		Serial.print("\t");
-		Serial.print(getAppName(i));
-		Serial.print("\t\t");
-		Serial.println(getAppInfo(i));
-	}
-	Serial.println(F("--------"));
+//	Serial.print(F("Apps:\n\
+//ID\tName\t\tDescr\n"));
+//	for(byte i = 1; i<=AppCount; i++)
+//	{
+//		Serial.print(i);
+//		Serial.print("\t");
+//		Serial.print(getAppName(i));
+//		Serial.print("\t\t");
+//		Serial.println(getAppInfo(i));
+//	}
+//	Serial.println(F("--------"));
 }
 void Core::run_app(byte id)
 {
 	if(id == 1)
 	{
 		setCurApp(new rfidspoofer(this));
-	}else if (id == testappID)
-	{
-		setCurApp(new testapp(this));		
-	} else if (id == sysinfID)
+	}//else if (id == testappID)
+	//{
+	//	setCurApp(new testapp(this));		
+	//} 
+	else if (id == sysinfID)
 	{
 		setCurApp(new sysinf(this));
 	}
@@ -236,6 +237,7 @@ void Core::update()
 }
 void Core::input_button(byte b)
 {
+	Serial.print(b);
 	if(GUImessage != "")
 	{
 		if(b != 255)
@@ -281,8 +283,10 @@ void Core::input_button(byte b)
 	}
 	if(curApp != 0)
 	{
+		Serial.print("d");
 		curApp->input_button(b);
 	}
+	Serial.println();
 }
 void Core::input_button_press(byte b, unsigned long tm)
 {
@@ -296,24 +300,24 @@ void Core::input_button_press(byte b, unsigned long tm)
 
 void Core::print_all_commands()
 {
-	Serial.print(F("System commands: \n\
-!h\tPrint this help\n\
-!n\tName of current app\n\
-!i\tID of current app\n\
-!r\tReset arduino\n\
-!a\tGet all info about all apps\n\
-!s $id\tStart app with requested id\n\
-!m $msg\tShow message with $msg content"));
-	if(curApp != 0)
-	{
-		Serial.print(F("Commands of app: "));
-		Serial.println(curApp->getName());
-		curApp->print_all_commands();
-	}
-	else
-	{
-		Serial.println(F("No application started now"));
-	}
+//	Serial.print(F("System commands: \n\
+//!h\tPrint this help\n\
+//!n\tName of current app\n\
+//!i\tID of current app\n\
+//!r\tReset arduino\n\
+//!a\tGet all info about all apps\n\
+//!s $id\tStart app with requested id\n\
+//!m $msg\tShow message with $msg content"));
+//	if(curApp != 0)
+//	{
+//		Serial.print(F("Commands of app: "));
+//		Serial.println(curApp->getName());
+//		curApp->print_all_commands();
+//	}
+//	else
+//	{
+//		Serial.println(F("No application started now"));
+//	}
 }
 void Core::input_command(char * comm, byte * commln, int commc, int len)
 {

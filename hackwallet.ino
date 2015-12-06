@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <EEPROM.h>
-#include <U8gl.h>
+#include <U8glib.h>
 #include <OneWire.h>
 #include <SoftwareSerial.h>
 #include "core.h"
@@ -66,6 +66,8 @@ void buttons_update();
 void readSerial();
 
 void setup() { 
+  pinMode(13, OUTPUT);
+
   Serial.begin(9600);
   Wire.begin();
   while(!Serial);
@@ -79,6 +81,7 @@ void setup() {
   os.addTask(readSerial, os.convertMs(50));
 
   Serial.println("Started");
+
 }
 
 char *_comm;
@@ -151,19 +154,23 @@ byte what_diap(short val)
 	}
 	return 255;
 }
+unsigned long mil;
+short v;
+byte z;
 void buttons_update()
 {
 //	if(lcdON)
 
-	unsigned long mil = millis();
-	short v = analogRead(keypin1);
+	mil += 11;
+	v = analogRead(keypin1);
 
 	if(((unsigned long)(mil/2000))%2 == 0)
 		core->mesure_battery();
 	core->mesure_battery();
 	if(v > 50)
 	{
-		byte z = what_diap(v);
+		digitalWrite(13, 1);
+		z = what_diap(v);
 		if(z != 255)
 		{
 			if(buttons1_state != z)
@@ -184,11 +191,13 @@ void buttons_update()
 			if(buttons1_state != 255)
 				core->input_button_press(buttons1_state*3 + 2, 0);
 		}
+		return;
 	}
 	else
 	{
 		if(buttons1_stateST != 0 &&  buttons1_state != 255)
 		{
+			digitalWrite(13, 0);
 			if(mil - buttons1_stateST > 25)
 			{
 				core->input_button(buttons1_state*3 + 2);
@@ -202,7 +211,8 @@ void buttons_update()
 	v = analogRead(keypin2);
 	if(v > 50)
 	{
-		byte z = what_diap(v);
+		digitalWrite(13, 1);
+		z = what_diap(v);
 		if(z != 255)
 		{
 			if(buttons2_state != z)
@@ -239,6 +249,8 @@ void buttons_update()
 	{
 		if(buttons2_stateST != 0 &&  buttons2_state != 255)
 		{
+			Serial.println(mil);
+			digitalWrite(13, 0);
 			if(mil - buttons2_stateST > 25)
 			{
 				if(buttons2_state < 3)
